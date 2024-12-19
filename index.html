@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>To-Do List</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <div class="container">
+        <h1>To-Do List</h1>
+        <input type="text" id="taskInput" placeholder="Add a new task...">
+        <button id="addButton">Add</button>
+        <div class="progress-container">
+            <div class="progress-bar" id="progressBar"></div>
+            <span id="completionPercentage">0%</span>
+        </div>
+        <ul id="taskList"></ul>
+    </div>
+    <script>
+        let totalTasks = 0;
+        let completedTasks = 0;
+
+        document.getElementById('addButton').addEventListener('click', function() {
+            const taskInput = document.getElementById('taskInput');
+            const taskValue = taskInput.value.trim();
+
+            if (taskValue) {
+                const li = document.createElement('li');
+                const taskText = document.createElement('span');
+                taskText.textContent = taskValue;
+
+                const actionIcons = document.createElement('div');
+                actionIcons.classList.add('action-icons');
+
+                const editImg = document.createElement('img');
+                editImg.src = 'https://img.icons8.com/ios/50/000000/edit--v1.png';
+                editImg.alt = 'Edit';
+
+                const deleteImg = document.createElement('img');
+                deleteImg.src = 'https://img.icons8.com/ios/50/000000/delete--v1.png';
+                deleteImg.alt = 'Delete';
+
+                actionIcons.appendChild(editImg);
+                actionIcons.appendChild(deleteImg);
+                li.appendChild(taskText);
+                li.appendChild(actionIcons);
+
+                totalTasks++;
+
+                taskText.addEventListener('click', function() {
+                    li.classList.toggle('completed');
+                    completedTasks += li.classList.contains('completed') ? 1 : -1;
+                    updateProgress();
+                });
+
+                editImg.addEventListener('click', function() {
+                    const newTask = prompt('Edit task:', taskText.textContent);
+                    if (newTask !== null && newTask.trim() !== '') {
+                        taskText.textContent = newTask.trim();
+                    }
+                });
+
+                deleteImg.addEventListener('click', function() {
+                    if (li.classList.contains('completed')) {
+                        completedTasks--;
+                    }
+                    totalTasks--;
+                    document.getElementById('taskList').removeChild(li);
+                    updateProgress();
+                });
+
+                document.getElementById('taskList').appendChild(li);
+                taskInput.value = '';
+                updateProgress();
+            }
+        });
+
+        function updateProgress() {
+            const progressBar = document.getElementById('progressBar');
+            const completionPercentage = document.getElementById('completionPercentage');
+            const percentage = totalTasks ? (completedTasks / totalTasks) * 100 : 0;
+
+            progressBar.style.width = percentage + '%';
+            completionPercentage.textContent = Math.round(percentage) + '%';
+        }
+    </script>
+</body>
+</html>
